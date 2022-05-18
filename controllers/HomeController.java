@@ -16,6 +16,7 @@ import app.session.Session;
 import app.views.HomeView;
 import app.views.View;
 import app.views.admin.AdminHome;
+import app.views.assistant.AssistantHome;
 
 public class HomeController extends Controller {
 	public HomeView view;
@@ -43,10 +44,9 @@ public class HomeController extends Controller {
 			String login = view.getLogin();
 			String password = view.getPassword();
 
-			System.out.println(Application.controller);
 			if (((AuthService) this.model).login(role, login, password)) {
-				System.out.println("Logged In");
-				Session.login = login;
+//				System.out.println("Logged In");
+//				Session.login = login;
 
 				Application.view.setVisible(false);
 
@@ -58,7 +58,8 @@ public class HomeController extends Controller {
 						break;
 					case assistant_de_programme:
 						Application.model = new AssistantDAOImpl();
-						// Application.controller = new AssistantDeProgrammeController();
+						Application.view = new AssistantHome();
+						Application.controller = new AssistantDeProgrammeController(Application.view, Application.model);
 						break;
 					case chef_de_classe:
 						break;
@@ -71,7 +72,6 @@ public class HomeController extends Controller {
 					default:
 						break;
 				}
-				System.out.println(Application.controller);
 			} else {
 				this.view.displayErrorMessage("Incorrect Credentials");
 			}

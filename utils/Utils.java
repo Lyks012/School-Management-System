@@ -1,6 +1,7 @@
 package app.utils;
 
 import app.entities.Administrateur;
+import app.entities.Assistant_De_Programme;
 import app.entities.Chef_De_Classe;
 import app.entities.Comptable;
 import app.entities.Enseignant;
@@ -15,7 +16,7 @@ public class Utils {
 		switch(role) {
 		case admin: user = new Administrateur(0, null, null);
 		break;
-		case assistant_de_programme: 
+		case assistant_de_programme: user = new Assistant_De_Programme(0, null, null); 
 			break;
 		case chef_de_classe: new Chef_De_Classe(0, null, null, 0);
 			break;
