@@ -20,10 +20,12 @@ public class AdminEditUserView extends AdminView {
 	private JTextField passwordTF;
 	private JTextField repeatPasswordTF;
 	private JComboBox<Roles> roleCB;
-	private JButton createButton;
+	private JButton editButton;
 	private JComboBox comboBox;
+	private int userId;
 
-	public AdminEditUserView(String login, String password, Roles role) {
+	public AdminEditUserView(int id, String login, String password, Roles role) {
+		this.userId = id;
 		getContentPane().setLayout(new GridLayout(7, 1, 0, 0));
 		setSize(403, 247);
 		setLocationRelativeTo(null);
@@ -120,6 +122,7 @@ public class AdminEditUserView extends AdminView {
 		roleCB = new JComboBox<Roles>();
 		select_type_panel.add(roleCB);
 		roleCB.setModel(new DefaultComboBoxModel<Roles>(Roles.values()));
+		roleCB.setSelectedItem(role);
 
 		JPanel panel = new JPanel();
 		getContentPane().add(panel);
@@ -150,12 +153,16 @@ public class AdminEditUserView extends AdminView {
 		annulerButton.setFont(new Font("Tahoma", Font.BOLD, 11));
 		sixth_row_panel.add(annulerButton);
 
-		createButton = new JButton("Creer");
-		createButton.setFont(new Font("Tahoma", Font.BOLD, 11));
-		createButton.setForeground(Color.BLACK);
-		sixth_row_panel.add(createButton);
+		editButton = new JButton("Modifier");
+		editButton.setFont(new Font("Tahoma", Font.BOLD, 11));
+		editButton.setForeground(Color.BLACK);
+		sixth_row_panel.add(editButton);
 	}
 
+	public int getUserId() {
+		return this.userId;
+	}
+	
 	public String getLogin() {
 		return this.loginTF.getText();
 	}
@@ -172,7 +179,7 @@ public class AdminEditUserView extends AdminView {
 		return (Roles) this.roleCB.getSelectedItem();
 	}
 
-	public void addListenerToCreateUserButton(ActionListener actionListener) {
-		createButton.addActionListener(actionListener);
+	public void addListenerToEditUserButton(ActionListener actionListener) {
+		editButton.addActionListener(actionListener);
 	}
 }

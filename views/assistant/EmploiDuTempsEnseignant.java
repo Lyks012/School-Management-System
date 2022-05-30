@@ -14,6 +14,8 @@ public class EmploiDuTempsEnseignant extends AssistantView {
 	public EmploiDuTempsEnseignant()
 	{
 
+		setSize(450, 300);
+		setLocationRelativeTo(null);
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, BorderLayout.SOUTH);
 		

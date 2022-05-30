@@ -1,5 +1,5 @@
 package app.views.assistant.listeners;
 
-public class HomeListener {
+public class HomeListener extends AssistantViewsListeners {
 
 }

@@ -37,6 +37,11 @@ public class AdminListUsersView extends AdminView {
 	public void addListenerToAppliquerFilterButton(ActionListener actionListener) {
 		appliquerFilterButton.addActionListener(actionListener);
 	}
+	
+	public int getIdSelectedItem() {
+		int row = table.getSelectedRow();
+		return Integer.parseInt(table.getModel().getValueAt(row, 0).toString());
+	}
 
 	public String getLoginSelectedItem() {
 		int row = table.getSelectedRow();
@@ -129,12 +134,13 @@ public class AdminListUsersView extends AdminView {
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		panel_3.add(scrollPane, BorderLayout.CENTER);
-
+			
+		
 		table = new JTable();
 		DefaultTableModel model = new DefaultTableModel();
 		model.setColumnIdentifiers(columnNames);
 		for (User user : users) {
-			System.out.println(user.getId() + " " + user.getLogin() + " " + user.getPassword() + " " + user.getRole());
+			
 			String[] userInfos = {
 					String.valueOf(user.getId()),
 					user.getLogin(),
@@ -145,6 +151,7 @@ public class AdminListUsersView extends AdminView {
 		}
 		table.setModel(model);
 		scrollPane.setViewportView(table);
+		
 	}
 
 }

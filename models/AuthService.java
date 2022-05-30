@@ -16,7 +16,7 @@ public class AuthService implements DAOImpl {
 			ps.setString(2, password);
 			
 			ResultSet rs = ps.executeQuery();
-			if(rs.first()) {
+			if(rs.first() && Roles.valueOf(rs.getString("role")).compareTo(role) == 0) {
 				return true;
 			}
 			return false;

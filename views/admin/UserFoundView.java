@@ -16,8 +16,11 @@ public class UserFoundView extends AdminView {
 	private JButton modifierButton;
 	private JButton supprimerButton;
 	private JLabel idLabel;
+	public User user;
 	
 	public UserFoundView(User user) {
+
+		this.user = user;
 		
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, BorderLayout.NORTH);
@@ -155,8 +158,4 @@ public class UserFoundView extends AdminView {
 	public void addListenerToSupprimerButton(ActionListener actionListener) {
 		supprimerButton.addActionListener(actionListener);
 	}
-	public int getId() {
-		return Integer.parseInt(idLabel.getText());
-	}
-	
 }

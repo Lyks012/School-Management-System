@@ -7,6 +7,8 @@ import javax.swing.JButton;
 public class ListeEmploiDuTempsClasses extends AssistantView {
 	public ListeEmploiDuTempsClasses() {
 		
+		setSize(450, 300);
+		setLocationRelativeTo(null);
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, BorderLayout.NORTH);
 		

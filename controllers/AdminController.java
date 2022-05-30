@@ -50,12 +50,49 @@ public class AdminController extends Controller {
 			case "AdminListUsersView":
 				addListUsersListeners();
 				break;
+			case "AdminEditUserView":
+				addEditUserListeners();
+				break;
 		}
 
 	}
+	
+	private void addEditUserListeners() {
+		addListenerToModifierEditUserView();
+		addListenerToAnnulerButton();
+	}
+
+	private void addListenerToModifierEditUserView() {
+		((AdminEditUserView) this.view).addListenerToEditUserButton(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				editUser();
+			}
+		});
+		
+	}
+	
+	private void editUser() {
+		User user = Utils.getUserInstance(((AdminEditUserView) this.view).getRole());
+		
+		user.setId(((AdminEditUserView) this.view).getUserId());
+		user.setLogin(((AdminEditUserView) this.view).getLogin());
+		user.setPassword(((AdminEditUserView) this.view).getPassword());
+		
+		try {
+			((AdminDAOImpl) this.model).update(user, user.getRole());
+			this.view.displaySuccessMessage("Utilisateur Modifie avec succes.");
+			updateView(new AdminHome());
+		} catch (AdminDAOException e) {
+			this.view.displayErrorMessage(e.getMessage());
+		}
+		
+		
+	}
 
 	private void addListUsersListeners() {
-		// addListenerToSupprimerButton();
+		addListenerToSupprimerButtonUserList();
 		addListenerToModifierButton();
 		addListenerToAnnulerButton();
 	}
@@ -63,7 +100,7 @@ public class AdminController extends Controller {
 	private void addUserFoundListeners() {
 		addListenerToAnnulerButton();
 		addListenerToModifierButton();
-		addListenerToSupprimerButton();
+		addListenerToSupprimerButtonUserFoundView();
 	}
 
 	// user found button listeners
@@ -71,33 +108,53 @@ public class AdminController extends Controller {
 		((AdminView) this.view).addListenerToModifierButton(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				int id = getIdSelectedItem();
 				String login = getLoginSelectedItem();
-				
 				String password = getPasswordSelectedItem();
-				
-				System.out.println(login+" "+ password);
 				Roles role = getRoleSelectedItem();
 
-				updateView(new AdminEditUserView(login, password, role));
+				updateView(new AdminEditUserView(id, login, password, role));
 			}
 		});
 	}
 
+	private int getIdSelectedItem() {
+		if(this.view.getClass().getSimpleName().equals("AdminListUsersView"))
+			return ((AdminListUsersView) this.view).getIdSelectedItem();
+		
+		return ((UserFoundView) this.view).user.getId();
+	}
 	private String getLoginSelectedItem() {
-		return ((AdminListUsersView) this.view).getLoginSelectedItem();
+		if(this.view.getClass().getSimpleName().equals("AdminListUsersView"))
+			return ((AdminListUsersView) this.view).getLoginSelectedItem();
+		
+		return ((UserFoundView) this.view).user.getLogin();
 	}
 
 	private Roles getRoleSelectedItem() {
-		return Roles.valueOf(((AdminListUsersView) this.view).getTypeSelectedItem());
+		if(this.view.getClass().getSimpleName().equals("AdminListUsersView"))
+			return Roles.valueOf(((AdminListUsersView) this.view).getTypeSelectedItem());
+		
+		return ((UserFoundView) this.view).user.getRole();
 	}
 
 	private String getPasswordSelectedItem() {
-		return ((AdminListUsersView) this.view).getPasswordSelectedItem();
+		if(this.view.getClass().getSimpleName().equals("AdminListUsersView"))
+			return ((AdminListUsersView) this.view).getPasswordSelectedItem();
+		return ((UserFoundView) this.view).user.getPassword();
 	}
 
-	private void addListenerToSupprimerButton() {
+	private void addListenerToSupprimerButtonUserFoundView() {
 		((UserFoundView) this.view).addListenerToSupprimerButton(new ActionListener() {
-
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				supprimerUser();
+			}
+		});
+	}
+	
+	private void addListenerToSupprimerButtonUserList() {
+		((AdminListUsersView) this.view).addListenerToSupprimerButton(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				supprimerUser();
@@ -118,8 +175,9 @@ public class AdminController extends Controller {
 			if (login == "" || password == "") {
 				throw new InputException("Veuillez founir des informatins correctes");
 			}
-
+			
 			User newUser = Utils.getUserInstance(role);
+			
 			newUser.setLogin(login);
 			newUser.setPassword(password);
 
@@ -245,24 +303,33 @@ public class AdminController extends Controller {
 				"Voulez vous supprimer cet utilisateur ? Cette action est irreversible", "Attention");
 
 		if (confirmedAction) {
-			int idUser = ((UserFoundView) this.view).getId();
+			int id = 0;
+			
+			if(this.view.getClass().getSimpleName().equals("AdminListUsersView"))
+				id = ((AdminListUsersView) this.view).getIdSelectedItem();
+			
+			else if(this.view.getClass().getSimpleName().equals("UserFoundView"))
+				id = ((UserFoundView) this.view).user.getId();
+			
 			try {
-				((AdminDAOImpl) this.model).delete(idUser);
+				((AdminDAOImpl) this.model).delete(id);
 				this.view.displaySuccessMessage("Utilisateur supprime avec succes.");
-				updateView(new AdminHome());
+				updateView(new AdminListUsersView(getAllUsers()));
 			} catch (AdminDAOException e) {
 				this.view.displayErrorMessage(e.getMessage());
 			}
 		}
-		// this.view.displayErrorMessage("ali");
-		System.out.println(confirmedAction);
 	}
 
 	private void findUserById(int id) {
 		try {
-			updateView(
-					new UserFoundView(
-							((AdminDAOImpl) model).findById(id)));
+			User user = ((AdminDAOImpl) model).findById(id);
+			if(user == null)
+				this.view.displayWarningMessage("No user found");
+			else
+				updateView(
+						new UserFoundView(
+								((AdminDAOImpl) model).findById(id)));
 		} catch (AdminDAOException e) {
 			this.view.displayErrorMessage(e.getClass() + " : " + e.getMessage());
 		}
@@ -270,7 +337,12 @@ public class AdminController extends Controller {
 
 	private void findUserByLogin(String login) {
 		try {
-			updateView(new UserFoundView(((AdminDAOImpl) model).findByLogin(login)));
+			User user = ((AdminDAOImpl) model).findByLogin(login);
+			
+			if(user == null)
+				this.view.displayWarningMessage("No user found");
+			else
+				updateView(new UserFoundView(((AdminDAOImpl) model).findByLogin(login)));
 		} catch (AdminDAOException e) {
 			this.view.displayErrorMessage(e.getClass() + " : " + e.getMessage());
 		}

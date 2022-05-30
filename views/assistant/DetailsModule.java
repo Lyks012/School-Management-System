@@ -9,6 +9,8 @@ import java.awt.FlowLayout;
 public class DetailsModule extends AssistantView {
 	public DetailsModule() {
 		
+		setSize(450, 300);
+		setLocationRelativeTo(null);
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, BorderLayout.NORTH);
 		

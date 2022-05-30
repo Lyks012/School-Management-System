@@ -7,10 +7,15 @@ import java.awt.FlowLayout;
 import javax.swing.JLabel;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 
 public class EmploiDuTempsClasse extends AssistantView {
+	private JTable table;
 	public EmploiDuTempsClasse() {
 		
+		setSize(454, 299);
+		setLocationRelativeTo(null);
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, BorderLayout.SOUTH);
 		
@@ -51,8 +56,11 @@ public class EmploiDuTempsClasse extends AssistantView {
 		JButton btnNewButton_3 = new JButton("Supprimer");
 		panel_7.add(btnNewButton_3);
 		
-		JPanel panel_3 = new JPanel();
-		panel_1.add(panel_3, BorderLayout.CENTER);
+		JScrollPane scrollPane = new JScrollPane();
+		panel_1.add(scrollPane, BorderLayout.CENTER);
+		
+		table = new JTable();
+		scrollPane.setViewportView(table);
 		
 		JPanel panel_4 = new JPanel();
 		getContentPane().add(panel_4, BorderLayout.NORTH);

@@ -9,6 +9,8 @@ import java.awt.FlowLayout;
 public class AssistantEmploiDuTemps extends AssistantView {
 	public AssistantEmploiDuTemps() {
 		
+		setSize(450, 300);
+		setLocationRelativeTo(null);
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, BorderLayout.NORTH);
 		

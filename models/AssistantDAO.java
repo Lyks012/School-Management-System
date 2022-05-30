@@ -22,7 +22,7 @@ public interface AssistantDAO<E> extends DAOImpl {
 	public void supprimerCours(int id_cours) throws AssistantDAOException;
 
 	// gestion modules
-	public void creerModule(String nomModule) throws AssistantDAOException;
+	public void creerModule(String nomModule, int id_enseignant, int coutHoraire) throws AssistantDAOException;
 
 	public void modifierModule(String newModuleName) throws AssistantDAOException;
 

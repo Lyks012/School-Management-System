@@ -6,6 +6,9 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import app.entities.Administrateur;
+import app.entities.Assistant_De_Programme;
+import app.entities.Chef_De_Classe;
+import app.entities.Comptable;
 import app.entities.Roles;
 import app.entities.User;
 import app.exception.db.AdminDAOException;
@@ -78,11 +81,12 @@ public class AdminDAOImpl implements AdminDAO<User> {
 	@Override
 	public void update(User user, Roles role) throws AdminDAOException {
 		try (Connection connection = DBManager.getConnection()) {
-			String query = "UPDATE" + role + "SET login=?, password=? WHERE id=?";
+			String query = "UPDATE users SET login=?, password=? WHERE id=?";
 
 			PreparedStatement ps = connection.prepareStatement(query);
 			ps.setString(1, user.getLogin());
 			ps.setString(2, user.getPassword());
+			ps.setInt(3, user.getId());
 
 			ps.executeUpdate();
 
@@ -103,11 +107,14 @@ public class AdminDAOImpl implements AdminDAO<User> {
 			ResultSet rs = preparedStatement.executeQuery();
 
 			while (rs.next()) {
+				
 				int id = rs.getInt("id");
 				String login = rs.getString("login");
 				String password = rs.getString("password");
 				Roles role = Roles.valueOf(rs.getString("role"));
 
+				System.out.println(id+""+login+""+password+""+role);
+				
 				users.add(createUserByType(id, login, password, role));
 			}
 
@@ -193,12 +200,13 @@ public class AdminDAOImpl implements AdminDAO<User> {
 				user = null;
 				break;
 			case comptable:
-				user = null;
+				user = new Comptable(id, login, password);
 				break;
 			case assistant_de_programme:
-				user = null;
+				user = new Assistant_De_Programme(id, login, password);
 				break;
 			case chef_de_classe:
+				
 				break;
 			case enseignant:
 				break;

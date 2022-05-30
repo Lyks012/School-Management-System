@@ -45,8 +45,6 @@ public class HomeController extends Controller {
 			String password = view.getPassword();
 
 			if (((AuthService) this.model).login(role, login, password)) {
-//				System.out.println("Logged In");
-//				Session.login = login;
 
 				Application.view.setVisible(false);
 

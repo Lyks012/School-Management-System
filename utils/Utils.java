@@ -18,7 +18,7 @@ public class Utils {
 		break;
 		case assistant_de_programme: user = new Assistant_De_Programme(0, null, null); 
 			break;
-		case chef_de_classe: new Chef_De_Classe(0, null, null, 0);
+		case chef_de_classe: user = new Chef_De_Classe(0, null, null, 0);
 			break;
 		case comptable: user = new Comptable(0,null,null);
 			break;

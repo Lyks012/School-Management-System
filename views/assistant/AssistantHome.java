@@ -9,13 +9,33 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 public class AssistantHome extends AssistantView {
+	private JButton goToEmploiDuTempsBtn;
+	private JButton goToModulesBtn;
+	private JButton goToClassesBtn;
+	private JButton goToPersoBtn;
+	private JButton logoutBtn;
+	
+	public void addListenerToGoToEmploiDuTempsBtn(ActionListener actionListener) {
+		this.goToEmploiDuTempsBtn.addActionListener(actionListener);
+	}
+	public void addListenerToGoToModulesBtn(ActionListener actionListener) {
+		this.goToModulesBtn.addActionListener(actionListener);
+	}
+	public void addListenerToGoToPersoBtn(ActionListener actionListener) {
+		this.goToPersoBtn.addActionListener(actionListener);
+	}
+	public void addListenerToGoToClassesBtn(ActionListener actionListener) {
+		this.goToClassesBtn.addActionListener(actionListener);
+	}
+	public void addListenerToLogoutBtn(ActionListener actionListener) {
+		this.logoutBtn.addActionListener(actionListener);
+	}
+	
 	public AssistantHome() {
-		
-		
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, BorderLayout.NORTH);
 		setSize(475, 211);
-		
+		setLocationRelativeTo(null);
 		JLabel lblNewLabel = new JLabel("Bienvenue");
 		panel.add(lblNewLabel);
 		
@@ -28,8 +48,8 @@ public class AssistantHome extends AssistantView {
 		FlowLayout fl_panel_2 = new FlowLayout(FlowLayout.CENTER, 10, 50);
 		panel_2.setLayout(fl_panel_2);
 		
-		JButton btnNewButton = new JButton("Emploi du temps");
-		panel_2.add(btnNewButton);
+		goToEmploiDuTempsBtn = new JButton("Emploi du temps");
+		panel_2.add(goToEmploiDuTempsBtn);
 		
 		JPanel panel_3 = new JPanel();
 		FlowLayout flowLayout = (FlowLayout) panel_3.getLayout();
@@ -37,12 +57,12 @@ public class AssistantHome extends AssistantView {
 		flowLayout.setVgap(50);
 		panel_1.add(panel_3);
 		
-		JButton btnNewButton_1 = new JButton("Modules");
-		btnNewButton_1.addActionListener(new ActionListener() {
+		goToModulesBtn = new JButton("Modules");
+		goToModulesBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 			}
 		});
-		panel_3.add(btnNewButton_1);
+		panel_3.add(goToModulesBtn);
 		
 		JPanel panel_4 = new JPanel();
 		FlowLayout flowLayout_1 = (FlowLayout) panel_4.getLayout();
@@ -50,8 +70,8 @@ public class AssistantHome extends AssistantView {
 		flowLayout_1.setVgap(50);
 		panel_1.add(panel_4);
 		
-		JButton btnNewButton_2 = new JButton("Classes");
-		panel_4.add(btnNewButton_2);
+		goToClassesBtn = new JButton("Classes");
+		panel_4.add(goToClassesBtn);
 		
 		JPanel panel_6 = new JPanel();
 		FlowLayout flowLayout_2 = (FlowLayout) panel_6.getLayout();
@@ -59,14 +79,14 @@ public class AssistantHome extends AssistantView {
 		flowLayout_2.setVgap(50);
 		panel_1.add(panel_6);
 		
-		JButton btnNewButton_4 = new JButton("Perso");
-		panel_6.add(btnNewButton_4);
+		goToPersoBtn = new JButton("Perso");
+		panel_6.add(goToPersoBtn);
 		
 		JPanel panel_5 = new JPanel();
 		getContentPane().add(panel_5, BorderLayout.SOUTH);
 		
-		JButton btnNewButton_3 = new JButton("Se Deconnecter");
-		panel_5.add(btnNewButton_3);
+		logoutBtn = new JButton("Se Deconnecter");
+		panel_5.add(logoutBtn);
 		
 	}
 

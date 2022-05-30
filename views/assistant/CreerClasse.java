@@ -1,44 +1,46 @@
 package app.views.assistant;
-import javax.swing.JPanel;
-import java.awt.event.ActionListener;
+
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import java.awt.GridLayout;
-import java.util.List;
-import java.awt.FlowLayout;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import app.entities.Chef_De_Classe;
+import app.entities.Classe;
 import app.entities.Enseignant;
 
-import javax.swing.JComboBox;
-
-public class CreerModule extends AssistantView {
+public class CreerClasse extends AssistantView{
 	private JTextField nomModuleTF;
-	private JButton creerModuleBtn;
+	private JButton creerClasseBtn;
 	private JButton retourBtn;
 	
 	JComboBox<String> enseignantsComboBox;
-	private JTextField coutHoraireTF;
+	JComboBox<String> chefDeClasseComboBox;
 	
-	public void addListenerToCreerModuleBtn(ActionListener actionListener) {
-		creerModuleBtn.addActionListener(actionListener);
+	public void addListenerToCreerClasseBtn(ActionListener actionListener) {
+		creerClasseBtn.addActionListener(actionListener);
 	}
 	
 	public void addListenerToRetourBtn(ActionListener actionListener) {
 		retourBtn.addActionListener(actionListener);
 	}
 	
-	public CreerModule(List<Enseignant> enseignants) {
+	public CreerClasse(List<Enseignant> enseignants, List<Chef_De_Classe> chefsDeClasse) {
 		
 		setSize(450, 300);
 		setLocationRelativeTo(null);
 		JPanel panel = new JPanel();
 		getContentPane().add(panel, BorderLayout.NORTH);
 		
-		JLabel lblNewLabel = new JLabel("Creeer Module");
+		JLabel lblNewLabel = new JLabel("Creeer Classe");
 		panel.add(lblNewLabel);
 		
 		JPanel panel_1 = new JPanel();
@@ -47,8 +49,8 @@ public class CreerModule extends AssistantView {
 		retourBtn = new JButton("Retour");
 		panel_1.add(retourBtn);
 		
-		creerModuleBtn = new JButton("Creer Module");
-		panel_1.add(creerModuleBtn);
+		creerClasseBtn = new JButton("Creer Classe");
+		panel_1.add(creerClasseBtn);
 		
 		JPanel panel_2 = new JPanel();
 		getContentPane().add(panel_2, BorderLayout.CENTER);
@@ -64,7 +66,7 @@ public class CreerModule extends AssistantView {
 		flowLayout.setAlignment(FlowLayout.RIGHT);
 		panel_3.add(panel_5);
 		
-		JLabel lblNewLabel_1 = new JLabel("Nom Module :");
+		JLabel lblNewLabel_1 = new JLabel("Nom Classe :");
 		panel_5.add(lblNewLabel_1);
 		
 		JPanel panel_6 = new JPanel();
@@ -87,7 +89,7 @@ public class CreerModule extends AssistantView {
 		flowLayout_4.setAlignment(FlowLayout.RIGHT);
 		panel_9.add(panel_10);
 		
-		JLabel lblNewLabel_3 = new JLabel("Cout Horaire :");
+		JLabel lblNewLabel_3 = new JLabel("Chef De Classe :");
 		panel_10.add(lblNewLabel_3);
 		
 		JPanel panel_11 = new JPanel();
@@ -96,9 +98,15 @@ public class CreerModule extends AssistantView {
 		flowLayout_5.setAlignment(FlowLayout.LEFT);
 		panel_9.add(panel_11);
 		
-		coutHoraireTF = new JTextField();
-		panel_11.add(coutHoraireTF);
-		coutHoraireTF.setColumns(10);
+		chefDeClasseComboBox = new JComboBox();
+		DefaultComboBoxModel<String> modelChefClasse = new DefaultComboBoxModel<>();
+		
+		for(Chef_De_Classe chefDeClasse : chefsDeClasse) {
+			System.out.println(chefDeClasse.getLogin());
+			modelChefClasse.addElement(chefDeClasse.getId()+ "-" + chefDeClasse.getLogin());
+		}
+		chefDeClasseComboBox.setModel(modelChefClasse);
+		panel_11.add(chefDeClasseComboBox);
 		
 		JPanel panel_4 = new JPanel();
 		panel_2.add(panel_4);
@@ -139,10 +147,11 @@ public class CreerModule extends AssistantView {
 				);
 	}
 
-	public String getNomModule() {
-		return nomModuleTF.getText();
+	public int getChefClasseSelectedId() {
+		String selectedChefClasse = (String) chefDeClasseComboBox.getSelectedItem();
+		return Integer.parseInt(selectedChefClasse.split("-")[0]);
 	}
-	public int getCoutHoraire() {
-		return Integer.parseInt(coutHoraireTF.getText());
+	public String getNomClasse() {
+		return nomModuleTF.getText();
 	}
 }

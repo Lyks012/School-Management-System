@@ -7,7 +7,9 @@ public class Chef_De_Classe extends User {
 		super(id, login, password, Roles.chef_de_classe);
 		this.classeId = classeId;
 	}
-	
+	public Chef_De_Classe(int id, String login, String password) {
+		super(id, login, password, Roles.chef_de_classe);
+	}
 	public int getClasseId() {
 		return this.classeId;
 	}

@@ -7,9 +7,18 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import app.entities.Assistant_De_Programme;
+import app.entities.Chef_De_Classe;
+import app.entities.Classe;
 import app.entities.CoursProgramme;
+import app.entities.Matiere;
+import app.entities.Paiement;
+import app.entities.Roles;
+import app.entities.Enseignant;
+import app.entities.EtatModule;
 import app.exception.db.AssistantDAOException;
+import app.utils.Utils;
 
 public class AssistantDAOImpl implements AssistantDAO {
 
@@ -102,22 +111,44 @@ public class AssistantDAOImpl implements AssistantDAO {
     }
 
     @Override
-    public void creerModule(String nomModule) throws AssistantDAOException {
+    public void creerModule(String nomModule, int id_enseignant, int coutHoraire) throws AssistantDAOException {
         try (Connection connection = DBManager.getConnection()) {
-            String query = "INSERT INTO module (nom) VALUES (?)";
+            String query = "INSERT INTO module (nom, id_enseignant) VALUES (?, ?)";
 
-            PreparedStatement ps = connection.prepareStatement(query);
+            PreparedStatement ps = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
             ps.setString(1, nomModule);
-            ps.execute();
+            ps.setInt(2, id_enseignant);
+            ps.executeUpdate();
 
-            ResultSet rs = ps.getResultSet();
-
+            ResultSet rs = ps.getGeneratedKeys();
+            rs.next();
+            
             // Creer Etat Module
-            creerEtatModule(rs.getInt("id"));
+            creerEtatModule(rs.getInt(1));
+            //creer etat paiement
+            creerEtatPaiementModule(rs.getInt(1), id_enseignant, coutHoraire);
         } catch (Exception e) {
-
+        	throw new AssistantDAOException(e.getMessage());
         }
     }
+    
+    public void CreerClasse(String nomClasse, int idEnseignant, int idChefDeClasse) throws AssistantDAOException {
+    	try(Connection connection = DBManager.getConnection()){
+    		String query = "INSERT INTO classe (nom, id_chefDeClasse, id_enseignant) VALUES (?, ?, ?)";
+    		PreparedStatement ps = connection.prepareStatement(query);
+    		
+    		ps.setString(1, nomClasse);
+    		ps.setInt(2, idChefDeClasse);
+    		ps.setInt(3, idEnseignant);
+    		
+    		ps.execute();
+    	}
+    	catch(Exception e) {
+    		throw new AssistantDAOException(e.getClass() + " " + e.getMessage());
+    	}
+    }
+
+    
 
     @Override
     public void modifierModule(String newModuleName) throws AssistantDAOException {
@@ -257,18 +288,217 @@ public class AssistantDAOImpl implements AssistantDAO {
         return nomModule;
     }
 
-    private void creerEtatModule(int id_module) {
+    private void creerEtatPaiementModule(int id_module, int id_enseignant, int coutHoraire){
+    	System.out.println("enter create paiement");
         try (Connection connection = DBManager.getConnection()) {
-            String query = "INSERT INTO etat_module (commentaires_assistant_de_programme, statut, id_module) VALUES ?, ?, ?";
+            String query = "INSERT INTO paiement (statut, coutHoraire, id_module, id_enseignant) VALUES (?, ?, ?, ?)";
             PreparedStatement ps = connection.prepareStatement(query);
-
-            ps.setString(1, "");
-            ps.setString(2, "");
-            ps.setInt(2, id_module);
+            System.out.println("creating paiment module");
+            ps.setString(1, "Non Paye");
+            ps.setInt(2, coutHoraire);
+            ps.setInt(3, id_module);
+            ps.setInt(4, id_enseignant);
 
             ps.execute();
         } catch (Exception e) {
-            // TODO: handle exception
+            System.out.println(e.getMessage());
         }
     }
+
+    private void creerEtatModule(int id_module) {
+    	System.out.println("Enter creer etat Module");
+        try (Connection connection = DBManager.getConnection()) {
+            String query = "INSERT INTO etat_module (commentaires_assistant_de_programme, statut, id_module) VALUES (?, ?, ?)";
+            PreparedStatement ps = connection.prepareStatement(query);
+            System.out.println("Creating etat module");
+            ps.setString(1, "");
+            ps.setString(2, "");
+            ps.setInt(3, id_module);
+
+            ps.execute();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    
+
+	public List<Matiere> GetAllMatieres() throws AssistantDAOException{
+		List<Matiere> matieres = new ArrayList<Matiere>();
+		try (Connection connection  = DBManager.getConnection()){
+			String query = "SELECT m.id_module, m.nom, m.id_enseignant, e_m.id_etat_module, p.id_paiement FROM module as m "
+					+ "INNER JOIN etat_module as e_m ON e_m.id_module = m.id_module "
+					+ "INNER JOIN paiement as p ON m.id_module = p.id_module";
+			
+			PreparedStatement ps = connection.prepareStatement(query);
+			ResultSet rs = ps.executeQuery();
+			while(rs.next()) {
+				
+				int id = rs.getInt("id_module");
+				String name = rs.getString("nom");
+				Enseignant enseignant = getEnseignant(rs.getInt("id_enseignant"));
+				Paiement etatPaiement = getEtatPaiement(rs.getInt("id_paiement"));
+				EtatModule etatModule = getEtatModule(rs.getInt("id_etat_module"));
+				
+				Matiere matiere = new Matiere(id, name, enseignant, etatPaiement, etatModule);
+				matieres.add(matiere);
+			}
+			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		return matieres;
+	}
+	
+	public List<Classe> GetAllClasses() throws AssistantDAOException{
+		List<Classe> classes = new ArrayList<Classe>();
+		try (Connection connection  = DBManager.getConnection()){
+			String query = "SELECT * FROM classe";
+			
+			PreparedStatement ps = connection.prepareStatement(query);
+			ResultSet rs = ps.executeQuery();
+			while(rs.next()) {
+				int id = rs.getInt("id_classe");
+				String name = rs.getString("nom");
+				Enseignant enseignant = getEnseignant(rs.getInt("id_enseignant"));
+				Chef_De_Classe chefDeClasse = getChefDeClasse(rs.getInt("id_chefDeClasse"));
+				
+				Classe classe = new Classe(id, name, enseignant, chefDeClasse);
+				classes.add(classe);
+			}
+			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		return classes;
+	}
+	
+	
+	
+
+	public List<Enseignant> getAllEnseignants() throws AssistantDAOException {
+		List<Enseignant> enseignants = new ArrayList<Enseignant>();;
+		try(Connection connection = DBManager.getConnection()){
+			String query = "SELECT * FROM users LEFT OUTER JOIN user_classe ON users.id_user = user_classe.user_id WHERE users.role = \"enseignant\"";
+			
+			PreparedStatement ps =  connection.prepareStatement(query);
+			
+			ResultSet rs = ps.executeQuery();
+			
+			while(rs.next()) {
+				Enseignant enseignant = new Enseignant(rs.getInt("id_user"), rs.getString("login"), rs.getString("password"), rs.getInt("classe_id"));
+				enseignants.add(enseignant);
+			}
+		}
+		catch(Exception e) {
+			throw new AssistantDAOException(e.getMessage());
+		}
+		
+		return enseignants;
+	}
+	
+	private EtatModule getEtatModule(int id) {
+        EtatModule etatModule = new EtatModule();
+		try (Connection connection = DBManager.getConnection()) {
+            String query = "SELECT * FROM etat_module WHERE id_etat_module = ?";
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setInt(1, id);
+
+            ResultSet rs = ps.executeQuery();
+            
+            if(rs.first()) {
+            	etatModule.setId(rs.getInt("id_etat_module"));
+            	etatModule.setStatut(rs.getString("statut"));
+            	etatModule.setCommentairesAssistantProgramme(rs.getString("commentaires_assistant_de_programme"));
+            }
+        } catch (Exception e) {
+        	System.out.println(e.getMessage());
+        }
+		return etatModule;
+	}
+
+	private Paiement getEtatPaiement(int id) {
+		Paiement paiement = new Paiement();
+		try (Connection connection = DBManager.getConnection()) {
+            String query = "SELECT * FROM paiement WHERE id_paiement = ?";
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setInt(1, id);
+
+            ResultSet rs = ps.executeQuery();
+            
+            if(rs.first()) {
+            	paiement.setId(rs.getInt("id_paiement"));
+            	paiement.setCoutHoraire(rs.getInt("coutHoraire"));
+            	paiement.setStatut(rs.getString("statut"));
+            	
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+		return paiement;
+
+	}
+
+	private Enseignant getEnseignant(int id) {
+        Enseignant enseignant = (Enseignant) Utils.getUserInstance(Roles.enseignant);
+		try (Connection connection = DBManager.getConnection()) {
+            String query = "SELECT * FROM users WHERE id_user= ?";
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setInt(1, id);
+
+            ResultSet rs = ps.executeQuery();
+            
+            if(rs.first()) {
+            	enseignant.setId(rs.getInt("id_user"));
+            	enseignant.setPassword("password");
+            	enseignant.setLogin("login");
+            	
+            }
+        } catch (Exception e) {
+        	System.out.println(e.getMessage());
+        }
+		return enseignant;
+	}
+	
+	private Chef_De_Classe getChefDeClasse(int id) {
+		Chef_De_Classe chefDeClasse = (Chef_De_Classe) Utils.getUserInstance(Roles.chef_de_classe);
+		try (Connection connection = DBManager.getConnection()) {
+            String query = "SELECT * FROM users WHERE id_user= ?";
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setInt(1, id);
+
+            ResultSet rs = ps.executeQuery();
+            
+            if(rs.first()) {
+            	chefDeClasse.setId(rs.getInt("id_user"));
+            	chefDeClasse.setPassword("password");
+            	chefDeClasse.setLogin("login");
+            }
+        } catch (Exception e) {
+        	System.out.println(e.getMessage());
+        }
+		return chefDeClasse;
+	}
+
+	public List<Chef_De_Classe> getAllChefsDeClasse() throws AssistantDAOException {
+        List<Chef_De_Classe> chefsDeClasse = new ArrayList<Chef_De_Classe>();;
+		try(Connection connection = DBManager.getConnection()){
+			String query = "SELECT * FROM users LEFT OUTER JOIN user_classe ON users.id_user = user_classe.user_id WHERE users.role = \"chef_de_classe\"";
+			
+			PreparedStatement ps =  connection.prepareStatement(query);
+			
+			ResultSet rs = ps.executeQuery();
+			
+			while(rs.next()) {
+				Chef_De_Classe chefDeClasse = new Chef_De_Classe(rs.getInt("id_user"), rs.getString("login"), rs.getString("password"), rs.getInt("classe_id"));
+				chefsDeClasse.add(chefDeClasse);
+			}
+		}
+		catch(Exception e) { 
+			throw new AssistantDAOException(e.getMessage());
+		}
+		
+		return chefsDeClasse;
+	}
+
 }
