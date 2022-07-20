@@ -28,4 +28,8 @@ public abstract class View extends JFrame {
 	public void displaySuccessMessage(String message) {
 		JOptionPane.showMessageDialog(this, message,"Success", JOptionPane.INFORMATION_MESSAGE);
 	}
+	
+	public String displayGetInfosMessage(String message) {
+		return JOptionPane.showInputDialog(this, message, JOptionPane.QUESTION_MESSAGE);
+	}
 }

@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import app.entities.Roles;
 import app.exception.db.AdminDAOException;
 
-public class AuthService implements DAOImpl {
+public class AuthService {
 	public boolean login(Roles role, String login, String password) throws Exception {
 		try(Connection connection = DBManager.getConnection()){
 			String query = "SELECT * FROM users WHERE login= ? AND password = ?";

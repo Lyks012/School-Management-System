@@ -2,29 +2,20 @@ package app.controllers;
 
 import app.entities.Roles;
 import java.awt.event.ActionListener;
-
-import javax.swing.JOptionPane;
-
 import java.awt.event.ActionEvent;
-
-import app.models.AdminDAOImpl;
-import app.models.AssistantDAOImpl;
 import app.models.AuthService;
-import app.models.DAOImpl;
 import app.runtime.Application;
-import app.session.Session;
 import app.views.HomeView;
-import app.views.View;
 import app.views.admin.AdminHome;
 import app.views.assistant.AssistantHome;
 
 public class HomeController extends Controller {
 	public HomeView view;
 
-	public HomeController(HomeView homeView, AuthService authService) {
+	public HomeController(HomeView homeView) {
 		super();
 		this.view = homeView;
-		this.model = authService;
+		
 		ajouterEcouteurAuBoutonSeConnecter();
 	}
 
@@ -44,20 +35,18 @@ public class HomeController extends Controller {
 			String login = view.getLogin();
 			String password = view.getPassword();
 
-			if (((AuthService) this.model).login(role, login, password)) {
+			if (model.authService.login(role, login, password)) {
 
 				Application.view.setVisible(false);
 
 				switch (role) {
 					case admin:
-						Application.model = new AdminDAOImpl();
-						Application.view = new AdminHome();
-						Application.controller = new AdminController(new AdminHome(), Application.model);
+//						Application.view = new AdminHome(); 
+						Application.controller = new AdminController(new AdminHome());
 						break;
 					case assistant_de_programme:
-						Application.model = new AssistantDAOImpl();
 						Application.view = new AssistantHome();
-						Application.controller = new AssistantDeProgrammeController(Application.view, Application.model);
+						Application.controller = new AssistantDeProgrammeController(Application.view);
 						break;
 					case chef_de_classe:
 						break;

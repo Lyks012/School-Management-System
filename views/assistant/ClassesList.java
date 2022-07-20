@@ -14,20 +14,24 @@ import javax.swing.table.DefaultTableModel;
 
 import app.entities.Classe;
 import app.entities.Matiere;
+import java.awt.FlowLayout;
 
 public class ClassesList extends AssistantView {
 	private JTable table;
 	private String[] columnName = {"Id", "Nom", "Chef De Classe", "Enseignant"};
 	
 	private JButton createClass;
-	private JButton seeClasseDetails;
-	private JButton supprimerClasse;
+	private JButton deleteClasse;
 	
 	public void addListenerToCreateClasse(ActionListener actionListener) {
 		this.createClass.addActionListener(actionListener);
 	}
-	public void addListenerToSeeClassseDetailBtn(ActionListener actionListener) {
-		this.seeClasseDetails.addActionListener(actionListener);
+	public void addListenerToDeleteBtn(ActionListener actionListener) {
+		this.deleteClasse.addActionListener(actionListener);
+	}
+	public int getIdSelectedClasse() {
+		int row = table.getSelectedRow();
+		return Integer.parseInt(table.getModel().getValueAt(row, 0).toString());
 	}
 	
 	public ClassesList(List<Classe> classes) {
@@ -45,6 +49,7 @@ public class ClassesList extends AssistantView {
 		
 		accueilBtn = new JButton("Accueil");
 		panel_1.add(accueilBtn);
+		panel_1.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
 		JPanel panel_2 = new JPanel();
 		getContentPane().add(panel_2, BorderLayout.WEST);
@@ -59,14 +64,8 @@ public class ClassesList extends AssistantView {
 		JPanel panel_4 = new JPanel();
 		panel_2.add(panel_4);
 		
-		seeClasseDetails = new JButton("Voir details ");
-		panel_4.add(seeClasseDetails);
-		
-		JPanel panel_5 = new JPanel();
-		panel_2.add(panel_5);
-		
-		supprimerClasse = new JButton("New button");
-		panel_5.add(supprimerClasse);
+		deleteClasse = new JButton("Supprimer Classe");
+		panel_4.add(deleteClasse);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		getContentPane().add(scrollPane, BorderLayout.CENTER);

@@ -10,6 +10,9 @@ public class Chef_De_Classe extends User {
 	public Chef_De_Classe(int id, String login, String password) {
 		super(id, login, password, Roles.chef_de_classe);
 	}
+	public Chef_De_Classe(int id){
+		super(id);
+	}
 	public int getClasseId() {
 		return this.classeId;
 	}

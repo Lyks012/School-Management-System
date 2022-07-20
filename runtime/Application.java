@@ -11,19 +11,19 @@ import app.session.Session;
 public class Application {
 	public static Controller controller;
 	public static View view;
-	public static DAOImpl model;
+//	public static DAOImpl model;
 	
-	public Application(View homeView, DAOImpl authService){
+	public Application(View homeView){
 		Application.view = homeView;
-		Application.model = authService;
+//		Application.model = authService;
 	}
 	
 	public static void main(String[] args) {
 		
 		view = new HomeView();
-		model = new AuthService();
 		
-		controller = new HomeController((HomeView) view, (AuthService) model);
+		
+		controller = new HomeController((HomeView) view);
 		
 //		Application app = new Application(view, null);
 		

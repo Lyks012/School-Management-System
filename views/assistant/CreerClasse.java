@@ -16,6 +16,7 @@ import javax.swing.JTextField;
 import app.entities.Chef_De_Classe;
 import app.entities.Classe;
 import app.entities.Enseignant;
+import app.entities.User;
 
 public class CreerClasse extends AssistantView{
 	private JTextField nomModuleTF;
@@ -33,7 +34,7 @@ public class CreerClasse extends AssistantView{
 		retourBtn.addActionListener(actionListener);
 	}
 	
-	public CreerClasse(List<Enseignant> enseignants, List<Chef_De_Classe> chefsDeClasse) {
+	public CreerClasse(List<User> enseignants, List<User> chefsDeClasse) {
 		
 		setSize(450, 300);
 		setLocationRelativeTo(null);
@@ -101,8 +102,7 @@ public class CreerClasse extends AssistantView{
 		chefDeClasseComboBox = new JComboBox();
 		DefaultComboBoxModel<String> modelChefClasse = new DefaultComboBoxModel<>();
 		
-		for(Chef_De_Classe chefDeClasse : chefsDeClasse) {
-			System.out.println(chefDeClasse.getLogin());
+		for(User chefDeClasse : chefsDeClasse) {
 			modelChefClasse.addElement(chefDeClasse.getId()+ "-" + chefDeClasse.getLogin());
 		}
 		chefDeClasseComboBox.setModel(modelChefClasse);
@@ -128,7 +128,7 @@ public class CreerClasse extends AssistantView{
 		enseignantsComboBox = new JComboBox();
 		DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
 		
-		for(Enseignant enseignant : enseignants) {
+		for(User enseignant : enseignants) {
 			model.addElement(enseignant.getId()+ "-" + enseignant.getLogin());
 		}
 		enseignantsComboBox.setModel(model);

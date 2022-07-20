@@ -9,14 +9,15 @@ import app.entities.Administrateur;
 import app.entities.Assistant_De_Programme;
 import app.entities.Chef_De_Classe;
 import app.entities.Comptable;
+import app.entities.Enseignant;
+import app.entities.Responsable_Pedagogique;
 import app.entities.Roles;
 import app.entities.User;
 import app.exception.db.AdminDAOException;
 
-public class AdminDAOImpl implements AdminDAO<User> {
-
-	@Override
-	public void create(User user) throws AdminDAOException {
+public class UserDAOImpl implements DAOImpl<User> {
+	// ajouter classe
+    public void create(User user) throws AdminDAOException {
 		try (Connection connection = DBManager.getConnection()) {
 			String query = "INSERT INTO users (login, password, role) VALUES(?, ?, ?)";
 
@@ -29,59 +30,49 @@ public class AdminDAOImpl implements AdminDAO<User> {
 			throw new AdminDAOException(e.getClass() + ":" + e.getMessage());
 		}
 	}
-
-	@Override
-	public User read(int id_user, Roles role) throws AdminDAOException {
+	
+	public User getOneById(int id_user) throws AdminDAOException {
+        User user = null;
 		try (Connection connection = DBManager.getConnection()) {
-			String query = "SELECT * FROM " + role + " WHERE id = ?";
+			String query = "SELECT * FROM users WHERE id_user = ?";
 
 			PreparedStatement preparedStatement = connection.prepareStatement(query);
 			preparedStatement.setInt(1, id_user);
 			ResultSet rs = preparedStatement.executeQuery();
 
-			User user = null;
-
-			if (rs.first()) {
-				int id = rs.getInt("id");
-				String login = rs.getString("login");
-				String password = rs.getString("password");
-				user = createUserByType(id, login, password, role);
+            if (rs.first()) {
+				user = generateUserFromResultSet(rs);
 			}
-
-			return user;
 		} catch (Exception e) {
 			throw new AdminDAOException(e.getClass() + ":" + e.getMessage());
 		}
+        return user;
 	}
 
-	@Override
-	public List<User> list(Roles role) throws AdminDAOException {
+	
+	public List<User> getAllByRole(Roles role) throws AdminDAOException {
 		List<User> users = new ArrayList<User>();
 
 		try (Connection connection = DBManager.getConnection()) {
-			String query = "SELECT * FROM" + role;
-			PreparedStatement preparedStatement = connection.prepareStatement(query);
-
-			ResultSet rs = preparedStatement.executeQuery();
+			String query = "SELECT * FROM users WHERE role = ?";
+			PreparedStatement ps = connection.prepareStatement(query);
+            ps.setString(1, role.toString());
+			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
-				int id = rs.getInt("id");
-				String login = rs.getString("login");
-				String password = rs.getString("password");
-
-				users.add(createUserByType(id, login, password, role));
+                User user = generateUserFromResultSet(rs);
+				users.add(user);
 			}
-
-			return users;
 		} catch (Exception e) {
 			throw new AdminDAOException(e.getClass() + ":" + e.getMessage());
 		}
+        return users;
 	}
 
-	@Override
-	public void update(User user, Roles role) throws AdminDAOException {
+	
+	public void update(User user) throws AdminDAOException {
 		try (Connection connection = DBManager.getConnection()) {
-			String query = "UPDATE users SET login=?, password=? WHERE id=?";
+			String query = "UPDATE users SET login=?, password=? WHERE id_user=?";
 
 			PreparedStatement ps = connection.prepareStatement(query);
 			ps.setString(1, user.getLogin());
@@ -95,8 +86,8 @@ public class AdminDAOImpl implements AdminDAO<User> {
 		}
 	}
 
-	@Override
-	public List<User> listAll() throws AdminDAOException {
+	
+	public List<User> getAll() throws AdminDAOException {
 		List<User> users = new ArrayList<User>();
 
 		try (Connection connection = DBManager.getConnection()) {
@@ -107,17 +98,9 @@ public class AdminDAOImpl implements AdminDAO<User> {
 			ResultSet rs = preparedStatement.executeQuery();
 
 			while (rs.next()) {
-				
-				int id = rs.getInt("id");
-				String login = rs.getString("login");
-				String password = rs.getString("password");
-				Roles role = Roles.valueOf(rs.getString("role"));
-
-				System.out.println(id+""+login+""+password+""+role);
-				
-				users.add(createUserByType(id, login, password, role));
+				User user = generateUserFromResultSet(rs);
+				users.add(user);
 			}
-
 			return users;
 		} catch (Exception e) {
 			throw new AdminDAOException(e.getClass() + ":" + e.getMessage());
@@ -125,32 +108,8 @@ public class AdminDAOImpl implements AdminDAO<User> {
 
 	}
 
-	// find by id et login a concatener
-	public User findById(int id) throws AdminDAOException {
-		User user = null;
 
-		try (Connection connection = DBManager.getConnection()) {
-			String query = "SELECT * FROM users WHERE id=?";
-
-			PreparedStatement ps = connection.prepareStatement(query);
-			ps.setInt(1, id);
-
-			ResultSet rs = ps.executeQuery();
-			if (rs.next()) {
-				user = createUserByType(
-						rs.getInt("id"),
-						rs.getString("login"),
-						rs.getString("password"),
-						Roles.valueOf(rs.getString("role")));
-			}
-
-			return user;
-		} catch (Exception e) {
-			throw new AdminDAOException(e.getClass() + ":" + e.getMessage());
-		}
-	}
-
-	public User findByLogin(String login) throws AdminDAOException {
+	public User getOneByLogin(String login) throws AdminDAOException {
 		User user = null;
 
 		try (Connection connection = DBManager.getConnection()) {
@@ -161,26 +120,22 @@ public class AdminDAOImpl implements AdminDAO<User> {
 
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
-				user = createUserByType(
-						rs.getInt("id"),
-						rs.getString("login"),
-						rs.getString("password"),
-						Roles.valueOf(rs.getString("role")));
+				user = generateUserFromResultSet(rs);
 			}
-
-			return user;
 		} catch (Exception e) {
 			throw new AdminDAOException(e.getClass() + ":" + e.getMessage());
 		}
+        return user;
 	}
 
-	@Override
-	public void delete(int id) throws AdminDAOException {
+    
+
+	public void delete(User user) throws AdminDAOException {
 		try (Connection connection = DBManager.getConnection()) {
 			String query = "DELETE FROM users WHERE id = ?";
 
 			PreparedStatement ps = connection.prepareStatement(query);
-			ps.setInt(1, id);
+			ps.setInt(1, user.getId());
 			ps.executeUpdate();
 
 		} catch (Exception e) {
@@ -197,7 +152,7 @@ public class AdminDAOImpl implements AdminDAO<User> {
 				user = new Administrateur(id, login, password);
 				break;
 			case responsable_pedagogique:
-				user = null;
+				user = new Responsable_Pedagogique(id, login, password);
 				break;
 			case comptable:
 				user = new Comptable(id, login, password);
@@ -206,13 +161,68 @@ public class AdminDAOImpl implements AdminDAO<User> {
 				user = new Assistant_De_Programme(id, login, password);
 				break;
 			case chef_de_classe:
-				
+				user = new Chef_De_Classe(id, login, password);
 				break;
 			case enseignant:
+				user = new Enseignant(id, login, password);
 				break;
 			default:
 				break;
 		}
 		return user;
+	}
+    private User generateUserFromResultSet(ResultSet rs) throws Exception{
+        User user = null;
+        try {
+            int id = rs.getInt("id_user");
+            String login = rs.getString("login");
+            String password = rs.getString("password");
+            Roles role = Roles.valueOf(rs.getString("role"));
+            user = createUserByType(id, login, password, role);
+        } catch (Exception e) {
+            throw new Exception(e.getClass() + " " + e.getMessage());
+        }
+        System.out.println(user);
+        return user;
+    }
+
+	public List<Enseignant> getEnseignants() throws AdminDAOException {
+		List<Enseignant> enseignants = new ArrayList<Enseignant>();
+
+		try (Connection connection = DBManager.getConnection()) {
+			String query = "SELECT * FROM users WHERE role = 'enseignant'";
+
+			PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+			ResultSet rs = preparedStatement.executeQuery();
+
+			while (rs.next()) {
+				Enseignant user = (Enseignant) generateUserFromResultSet(rs);
+				enseignants.add(user);
+			}
+			return enseignants;
+		} catch (Exception e) {
+			throw new AdminDAOException(e.getClass() + ":" + e.getMessage());
+		}
+
+
+	}
+
+	public Assistant_De_Programme getAssistant() throws AdminDAOException {
+        Assistant_De_Programme assistant = null;
+		try (Connection connection = DBManager.getConnection()) {
+			String query = "SELECT * FROM users WHERE role = 'assistant_de_programme'";
+
+			PreparedStatement preparedStatement = connection.prepareStatement(query);
+			
+			ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.first()) {
+				assistant = (Assistant_De_Programme) generateUserFromResultSet(rs);
+			}
+		} catch (Exception e) {
+			throw new AdminDAOException(e.getClass() + ":" + e.getMessage());
+		}
+        return assistant;
 	}
 }

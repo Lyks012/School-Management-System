@@ -5,27 +5,17 @@ public class Paiement {
 	private String statut;
 	private int coutHoraire;
 	
-	private Enseignant enseignant;
-	private Matiere matiere;
 	
-	public Paiement(int id, String statut, int coutHoraire, Enseignant enseignant, Matiere matiere) {
+	public Paiement(int id, String statut, int coutHoraire) {
 		super();
 		this.id = id;
 		this.statut = statut;
 		this.coutHoraire = coutHoraire;
-		this.enseignant = enseignant;
-		this.matiere = matiere;
 	}
-	public Paiement(int id, String statut, int coutHoraire, Enseignant enseignant) {
+	public Paiement() {
 		super();
-		this.id = id;
-		this.statut = statut;
-		this.coutHoraire = coutHoraire;
-		this.enseignant = enseignant;
 	}
-	public Paiement(){
-		
-	}
+	
 	
 	public int getId() {
 		return id;
@@ -44,18 +34,6 @@ public class Paiement {
 	}
 	public void setCoutHoraire(int coutHoraire) {
 		this.coutHoraire = coutHoraire;
-	}
-	public Enseignant getEnseignant() {
-		return enseignant;
-	}
-	public void setEnseignant(Enseignant enseignant) {
-		this.enseignant = enseignant;
-	}
-	public Matiere getMatiere() {
-		return matiere;
-	}
-	public void setMatiere(Matiere matiere) {
-		this.matiere = matiere;
 	}
 	
 	

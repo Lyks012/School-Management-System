@@ -7,7 +7,7 @@ import java.awt.GridLayout;
 import java.util.List;
 
 import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -16,17 +16,27 @@ import app.entities.Matiere;
 
 public class MatieresList extends AssistantView {
 	private JTable table;
-	private String[] columnName = {"Id", "Nom", "Enseignant", "Etat", "Etat paiement"};
+	private String[] columnName = {"Id", "Nom", "Enseignant", "Etat Module", "Etat paiement"};
 	
 	private JButton createModule;
-	private JButton seeModuleDetails;
 	private JButton supprimerModule;
+	private JButton detailsModule;
 	
 	public void addListenerToCreateModuleBtn(ActionListener actionListener) {
 		this.createModule.addActionListener(actionListener);
 	}
-	public void addListenerToSeeModuleDetailseBtn(ActionListener actionListener) {
-		this.seeModuleDetails.addActionListener(actionListener);
+	public void addListenerToSupprimerBtn(ActionListener actionListener) {
+		this.supprimerModule.addActionListener(actionListener);
+	}
+	
+	public void addListenerToDetailsBtn(ActionListener actionListener) {
+		this.detailsModule.addActionListener(actionListener);
+	}
+	
+	public int getIdSelectedModule() {
+		int row = table.getSelectedRow();
+		if(row >= 0) return Integer.parseInt(table.getModel().getValueAt(row, 0).toString());
+		return -1;
 	}
 	
 	public MatieresList(List<Matiere> matieres) {
@@ -58,13 +68,13 @@ public class MatieresList extends AssistantView {
 		JPanel panel_4 = new JPanel();
 		panel_2.add(panel_4);
 		
-		seeModuleDetails = new JButton("Voir details ");
-		panel_4.add(seeModuleDetails);
+		detailsModule = new JButton("Voir Details");
+		panel_4.add(detailsModule);
 		
 		JPanel panel_5 = new JPanel();
 		panel_2.add(panel_5);
 		
-		supprimerModule = new JButton("New button");
+		supprimerModule = new JButton("Supprimer");
 		panel_5.add(supprimerModule);
 		
 		JScrollPane scrollPane = new JScrollPane();
@@ -79,7 +89,7 @@ public class MatieresList extends AssistantView {
 						String.valueOf(matiere.getId()),
 						matiere.getNom(),
 						matiere.getEnseignant().getLogin(),
-						matiere.getEtatModule().getCommentairesAssistantProgramme(),
+						matiere.getEtatModule().getStatut(),
 						matiere.getEtatPaiement().getStatut()
 				};
 				

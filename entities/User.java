@@ -12,6 +12,10 @@ public abstract class User {
 		this.password = password;
 		this.role = role;
 	}
+
+	public User (int id) {
+		this.id = id;
+	}
 	
 	public int getId() {
 		return id;

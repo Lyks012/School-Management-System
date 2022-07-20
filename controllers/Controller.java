@@ -1,11 +1,16 @@
 package app.controllers;
 
 import app.models.DAOImpl;
+import app.models.Model;
 import app.views.View;
 
 public abstract class Controller {
 	protected View view;
-	protected DAOImpl model;
+	protected Model model;
+	
+	public Controller() {
+		this.model = new Model();
+	}
 
 	public void updateView(View newView) {
 		this.view.dispose();

@@ -13,7 +13,13 @@ public class Classe {
 		this.enseignant = enseignant;
 		this.chefDeClasse = chefDeClasse;
 	}
+	public Classe(int id) {
+		this.id = id;
+	}
 	
+	public Classe() {
+		super();
+	}
 	public int getId() {
 		return id;
 	}

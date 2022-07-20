@@ -140,7 +140,7 @@ public class AdminListUsersView extends AdminView {
 		DefaultTableModel model = new DefaultTableModel();
 		model.setColumnIdentifiers(columnNames);
 		for (User user : users) {
-			
+			System.out.println(user.getId());
 			String[] userInfos = {
 					String.valueOf(user.getId()),
 					user.getLogin(),

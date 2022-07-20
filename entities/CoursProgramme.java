@@ -1,28 +1,34 @@
 package app.entities;
 
 public class CoursProgramme {
+    private int id;
     private String horaire;
-    private String date;
-    private int id_enseignant;
-    private String nom_emseignant;
+    private String jour;
+    private int semaine;
+    private String contenu;
+    private boolean valideParEnseignant;
 
-    private int id_module;
-    private String nom_module;
+    private Matiere matiere;
+    private Classe classe;
 
-    private int id_classe;
-    private String nom_classe;
-
-    public CoursProgramme(String horaire, String date, int id_enseignant, String nom_emseignant, int id_module,
-            String nom_module, int id_classe, String nom_classe) {
+    public CoursProgramme(int id, String horaire, String jour,int semaine, String contenu, boolean valideParEnseignant, Matiere matiere,
+             Classe classe) {
         super();
+        this.id = id;
         this.horaire = horaire;
-        this.date = date;
-        this.id_enseignant = id_enseignant;
-        this.nom_emseignant = nom_emseignant;
-        this.id_module = id_module;
-        this.nom_module = nom_module;
-        this.id_classe = id_classe;
-        this.nom_classe = nom_classe;
+        this.jour = jour;
+        this.semaine = semaine;
+        this.contenu = contenu;
+        this.valideParEnseignant = valideParEnseignant;
+        this.matiere = matiere;
+        this.classe = classe;
+    }
+
+    public int getId(){
+        return id;
+    }
+    public void setId(int id){
+        this.id = id;
     }
 
     public String getHoraire() {
@@ -33,59 +39,43 @@ public class CoursProgramme {
         this.horaire = horaire;
     }
 
-    public String getDate() {
-        return date;
+    public String getJour() {
+        return jour;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setJour(String jour) {
+        this.jour = jour;
+    }
+    
+    public int getSemaine() {
+        return semaine;
     }
 
-    public int getId_enseignant() {
-        return id_enseignant;
+    public boolean getValideParEnseignat() {
+    	return valideParEnseignant;
+    }
+    
+    public String getContenu() {
+    	return contenu;
+    }
+    
+    public void setSemaine(int semaine) {
+        this.semaine = semaine;
     }
 
-    public void setId_enseignant(int id_enseignant) {
-        this.id_enseignant = id_enseignant;
+    public Matiere getMatiere() {
+        return matiere;
     }
 
-    public String getNom_emseignant() {
-        return nom_emseignant;
+    public void setMatiere(Matiere matiere) {
+        this.matiere = matiere;
     }
 
-    public void setNom_emseignant(String nom_emseignant) {
-        this.nom_emseignant = nom_emseignant;
+    public Classe getClasse() {
+        return classe;
     }
 
-    public int getId_module() {
-        return id_module;
-    }
-
-    public void setId_module(int id_module) {
-        this.id_module = id_module;
-    }
-
-    public String getNom_module() {
-        return nom_module;
-    }
-
-    public void setNom_module(String nom_module) {
-        this.nom_module = nom_module;
-    }
-
-    public int getId_classe() {
-        return id_classe;
-    }
-
-    public void setId_classe(int id_classe) {
-        this.id_classe = id_classe;
-    }
-
-    public String getNom_classe() {
-        return nom_classe;
-    }
-
-    public void setNom_classe(String nom_classe) {
-        this.nom_classe = nom_classe;
+    public void setId_classe(Classe classe) {
+        this.classe = classe;
     }
 }

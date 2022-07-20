@@ -10,6 +10,9 @@ public class Enseignant extends User {
 	public Enseignant(int id, String login, String password){
 		super(id, login, password, Roles.enseignant);
 	}
+	public Enseignant(int id){
+		super(id);
+	}
 	public int getClasseId() {
 		return this.classeId;
 	}

@@ -9,6 +9,11 @@ public class Matiere {
 		this.etatPaiement = etatPaiement;
 		this.etatModule = etatModule;
 	}
+
+	public Matiere() {
+		super();
+	}
+
 	private int id;
 	private String nom;
 	

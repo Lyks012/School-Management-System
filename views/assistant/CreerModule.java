@@ -12,6 +12,7 @@ import java.awt.FlowLayout;
 import javax.swing.JTextField;
 
 import app.entities.Enseignant;
+import app.entities.User;
 
 import javax.swing.JComboBox;
 
@@ -31,7 +32,7 @@ public class CreerModule extends AssistantView {
 		retourBtn.addActionListener(actionListener);
 	}
 	
-	public CreerModule(List<Enseignant> enseignants) {
+	public CreerModule(List<User> enseignants) {
 		
 		setSize(450, 300);
 		setLocationRelativeTo(null);
@@ -120,8 +121,8 @@ public class CreerModule extends AssistantView {
 		enseignantsComboBox = new JComboBox();
 		DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
 		
-		for(Enseignant enseignant : enseignants) {
-			model.addElement(enseignant.getId()+ "-" + enseignant.getLogin());
+		for(User enseignant : enseignants) {
+			model.addElement(enseignant.getId()+ "-" +  enseignant.getLogin());
 		}
 		enseignantsComboBox.setModel(model);
 		panel_8.add(enseignantsComboBox);
